@@ -5,29 +5,40 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      monsters: [],
+      heroes: [],
       searchField: "",
     };
   }
 
   componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch("https://akabab.github.io/superhero-api/api/all.json")
       .then((response) => response.json())
       .then((users) =>
         this.setState(
           () => {
-            return { monsters: users };
-          },
-          () => {
-            console.log(this.state);
+            return { heroes: users };
           }
+          // () => {
+          //   console.log(this.state);
+          // }
         )
       );
   }
 
+  onSearchChange = (e) => {
+    const searchField = e.target.value.toLocaleLowerCase();
+
+    this.setState(() => {
+      return { searchField };
+    });
+  };
+
   render() {
-    const filteredMonsters = this.state.monsters.filter((monster) => {
-      return monster.name.toLocaleLowerCase().includes(this.state.searchField);
+    const { heroes, searchField } = this.state;
+    const { onSearchChange } = this;
+
+    const filteredheroes = heroes.filter((hero) => {
+      return hero.name.toLocaleLowerCase().includes(searchField);
     });
 
     return (
@@ -35,19 +46,14 @@ class App extends Component {
         <input
           className="search-box"
           type="search"
-          placeholder="search monsters"
-          onChange={(e) => {
-            const searchField = e.target.value.toLocaleLowerCase();
-
-            this.setState(() => {
-              return { searchField };
-            });
-          }}
+          placeholder="search heroes or villains"
+          onChange={onSearchChange}
         />
-        {filteredMonsters.map((monster) => {
+        {filteredheroes.map((hero) => {
           return (
-            <div key={monster.id}>
-              <h1>{monster.name}</h1>
+            <div key={hero.id}>
+              <img src={hero.images.sm} alt="" />
+              <h1>{hero.name}</h1>
             </div>
           );
         })}
